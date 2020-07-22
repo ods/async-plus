@@ -1,9 +1,13 @@
 import asyncio
 import itertools
 import time
+from typing import Sequence, Union
 
 
 __all__ = ['RetryDelayer']
+
+
+FloatLike = Union[int, float]
 
 
 class RetryDelayer:
@@ -20,9 +24,20 @@ class RetryDelayer:
             except Exception:
                 logger.exception('Error in service X:')
                 await retry_delayer.sleep()
+
+    Classic exponential backoff with first retry without delay:
+
+        retry_delayer = async_plus.RetryDelayer(
+            delays = [0] + [2 ** n for n in range(10)]
+        )
+        ...
     """
 
-    def __init__(self, delays=(0, 10, 60), reset_after=None):
+    def __init__(
+        self,
+        delays: Sequence[FloatLike] = (0, 1, 10, 60),
+        reset_after: FloatLike = None,
+    ):
         self.delays = delays
         if reset_after is None:
             reset_after = delays[-1]
