@@ -6,3 +6,4 @@ Change Log
 
 * ``launch_watched()``
 * ``coroutine_scope()``
+# ``RetryDelayer``
