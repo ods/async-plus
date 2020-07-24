@@ -32,6 +32,23 @@ occurs.  In all cases all unfinished tasks are cancelled at the end of
 ``async with`` block.
 
 
+Increase delay between attempts in superviser
+---------------------------------------------
+
+.. code-block:: python
+
+    retry_delayer = async_plus.RetryDelayer()
+    while True:
+        try:
+            await run_service_x()
+        # In Python <3.8 it inherits from Exception
+        except asyncio.CancelledError:
+            raise
+        except Exception:
+            logger.exception('Error in service X:')
+            await retry_delayer.sleep()
+
+
 Change log
 ----------
 
