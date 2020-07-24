@@ -52,8 +52,8 @@ def launch_watched(coro, name=None, on_exception=None):
 @asynccontextmanager
 async def task_scope(on_exception=None):
     """
-    Isolated scope of couroutines.  All coroutines launched in the scope
-    are cancelled on exit.
+    Isolated scope of tasks.  All tasks launched in the scope are cancelled
+    on exit.
 
     Usage example:
 

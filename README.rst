@@ -14,7 +14,7 @@ excpetion is logged immediately when it's raised.
 
 .. code-block:: python
 
-    async_plus.launch_watched(your_coroutine(...))
+    async_plus.launch_watched(your_coroutine_func(...))
 
 
 Structuring groups of tasks
@@ -22,14 +22,14 @@ Structuring groups of tasks
 
 .. code-block:: python
 
-    with async_plus.task_scope() as scope:
-        scope.launch(coroutine1(...))
-        scope.launch(coroutine2(...))
+    async with async_plus.task_scope() as scope:
+        scope.launch(coroutine_func1(...))
+        scope.launch(coroutine_func2(...))
         await scope.wait()
 
 By default, ``wait()`` call returns when all tasks finish or first exception
-occurs.  In all cases all unfinished tasks are cancelled at the end for
-``with`` block.
+occurs.  In all cases all unfinished tasks are cancelled at the end of
+``async with`` block.
 
 
 Change log
