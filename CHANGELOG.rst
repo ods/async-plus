@@ -5,5 +5,5 @@ Change Log
 ------------------
 
 * ``launch_watched()``
-* ``coroutine_scope()``
+* ``task_scope()``
 # ``RetryDelayer``

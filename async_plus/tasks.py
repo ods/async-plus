@@ -1,10 +1,10 @@
 import asyncio
-from contextlib import contextmanager
+from contextlib import asynccontextmanager
 import functools
 import logging
 
 
-__all__ = ['launch_watched', 'coroutine_scope']
+__all__ = ['launch_watched', 'task_scope']
 
 
 logger = logging.getLogger(__name__)
@@ -49,31 +49,37 @@ def launch_watched(coro, name=None, on_exception=None):
     return task
 
 
-@contextmanager
-def coroutine_scope(on_exception=None):
+@asynccontextmanager
+async def task_scope(on_exception=None):
     """
     Isolated scope of couroutines.  All coroutines launched in the scope
     are cancelled on exit.
 
     Usage example:
 
-        with coroutine_scope() as scope:
+        async with task_scope() as scope:
             scope.launch(coro1)
             scope.launch(coro2)
             await scope.wait()
     """
-    scope = _CoroutineScope(on_exception)
+    scope = _TaskScope(on_exception)
     try:
         yield scope
     finally:
         scope.cancel()
+        # Wait cancelation to take effect
+        if scope:
+            await scope.wait(return_when=asyncio.ALL_COMPLETED)
 
 
-class _CoroutineScope:
+class _TaskScope:
 
     def __init__(self, on_exception=None):
         self.tasks = set()
         self.default_on_exception = on_exception
+
+    def __len__(self):
+        return len(self.tasks)
 
     def launch(self, coro, on_exception=None, **kwargs):
         if on_exception is None:

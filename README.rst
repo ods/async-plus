@@ -22,7 +22,7 @@ Structuring groups of tasks
 
 .. code-block:: python
 
-    with async_plus.coroutine_scope() as scope:
+    with async_plus.task_scope() as scope:
         scope.launch(coroutine1(...))
         scope.launch(coroutine2(...))
         await scope.wait()
