@@ -52,4 +52,7 @@ Increase delay between attempts in superviser
 Change log
 ----------
 
+..  Absolute link is needed for correct description on PyPI.
+    See https://github.com/pypa/readme_renderer/issues/163
+
 See `CHANGELOG <https://github.com/ods/async-plus/blob/master/CHANGELOG.rst>`_.
