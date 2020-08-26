@@ -1,13 +1,18 @@
 import asyncio
 import itertools
 import time
-from typing import Sequence, Union
+from typing import Sequence, Union, TYPE_CHECKING
 
 
 __all__ = ['RetryDelayer']
 
 
-FloatLike = Union[int, float]
+if TYPE_CHECKING:
+    # Workaround for bug in mypy not accepting `numbers.Real`
+    # https://github.com/python/mypy/issues/3186
+    Real = Union[int, float]
+else:
+    from numbers import Real
 
 
 class RetryDelayer:
@@ -35,8 +40,8 @@ class RetryDelayer:
 
     def __init__(
         self,
-        delays: Sequence[FloatLike] = (0, 1, 10, 60),
-        reset_after: FloatLike = None,
+        delays: Sequence[Real] = (0, 1, 10, 60),
+        reset_after: Real = None,
     ):
         self.delays = delays
         if reset_after is None:
