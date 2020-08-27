@@ -1,4 +1,5 @@
 import asyncio
+import inspect
 import logging
 from unittest.mock import Mock
 
@@ -22,6 +23,47 @@ async def instant():
 
 async def falling():
     raise CustomException('FALLING_TASK')
+
+async def delayed(delay, result=None):
+    await asyncio.sleep(delay)
+    return result
+
+
+async def test_try_gather_is_useful():
+    # Not an actual test, but a demonstration that `asyncio.gather()` has
+    # problems and `try_gather` is actually useful
+    eternal_fut = eternal()
+    eternal_task = asyncio.create_task(eternal_fut)
+    falling_fut = falling()
+    with pytest.raises(CustomException):
+        await asyncio.gather(eternal_task, falling_fut)
+    assert not eternal_task.cancelled()
+    assert inspect.getcoroutinestate(eternal_fut) != inspect.CORO_CLOSED
+    eternal_task.cancel()
+
+
+@pytest.mark.parametrize('delay1, delay2', [(0, 0.001), (0.001, 0)])
+async def test_try_gather_results(delay1, delay2):
+    expected1 = object()
+    expected2 = object()
+    assert expected1 != expected2
+    result1, result2 = await async_plus.try_gather(
+        delayed(delay1, result=expected1),
+        delayed(delay2, result=expected2),
+    )
+    assert result1 == expected1
+    assert result2 == expected2
+
+
+@pytest.mark.parametrize('wrapper', [lambda x: x, asyncio.create_task])
+async def test_try_gather_falling(wrapper):
+    eternal_fut = eternal()
+    falling_fut = falling()
+    with pytest.raises(CustomException):
+        await async_plus.try_gather(
+            wrapper(eternal_fut), wrapper(falling_fut),
+        )
+    assert inspect.getcoroutinestate(eternal_fut) == inspect.CORO_CLOSED
 
 
 @pytest.mark.parametrize('task_name', [None, 'TASK_NAME'])

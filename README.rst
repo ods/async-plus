@@ -4,6 +4,22 @@ async_plus
 Async-related stuff you miss in standard library
 
 
+Safely run coroutines concurrently
+----------------------------------
+
+The ``asyncio.gather()`` function has an issue: it case of error in one of
+coroutines the rest are left running detached.  This might cause hard to detect
+problems.  On the contrary, the ``async_plus.try_gather()`` insures all tasks
+are cancelled on error:
+
+.. code-block:: python
+
+    result1, result2 = await async_plus.try_gather(
+        coroutine_func1(...),
+        coroutine_func2(...),
+    )
+
+
 Fire-and-forget task
 --------------------
 

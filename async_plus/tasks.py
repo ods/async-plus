@@ -4,10 +4,23 @@ import functools
 import logging
 
 
-__all__ = ['launch_watched', 'task_scope']
+__all__ = ['try_gather', 'launch_watched', 'task_scope']
 
 
 logger = logging.getLogger(__name__)
+
+
+async def try_gather(*futs):
+    """ Safe version of gather that doesn't leak tasks """
+    futs = [asyncio.ensure_future(fut) for fut in futs]
+    try:
+        return await asyncio.gather(*futs)
+    finally:
+        for fut in futs:
+            if not fut.done():
+                fut.cancel()
+        # TODO Limit time and log warning when timed out?
+        await asyncio.wait(futs)
 
 
 def _task_done_callback(task, on_exception=None):
