@@ -5,4 +5,4 @@ Change Log
 ------------------
 
 * Safer task handling with ``launch_watched()`` and ``task_scope()``.
-* Controling delays in superviser with ``RetryDelayer``.
+* Controling delays in supervisor with ``RetryDelayer``.

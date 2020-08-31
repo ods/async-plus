@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 async def try_gather(*futs):
-    """ Safe version of gather that doesn't leak tasks """
+    """Safe version of gather that doesn't leak tasks."""
     futs = [asyncio.ensure_future(fut) for fut in futs]
     try:
         return await asyncio.gather(*futs)
