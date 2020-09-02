@@ -3,6 +3,32 @@ async_plus
 
 Async-related stuff you miss in standard library
 
+..  Original (unscaled) picture:
+    https://upload.wikimedia.org/wikipedia/commons/f/fe/The_Hanging_by_Jacques_Callot.jpg
+    :align:, :figwidth: directives appear not working for figure, so just scale
+    it with Wikimedia capabilities and put under description.
+
+.. figure:: https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/The_Hanging_by_Jacques_Callot.jpg/500px-The_Hanging_by_Jacques_Callot.jpg
+
+    *“The horrors of hanging tasks when using asyncio” by Jacques Callot*
+
+
+Safely run coroutines concurrently
+----------------------------------
+
+The ``asyncio.gather()`` function has an
+`issue <https://bugs.python.org/issue31452>`_: in case of error in one of
+coroutines the rest coroutines are left running detached.  This might cause
+hard to detect problems.  On the contrary, the ``async_plus.try_gather()``
+insures all tasks are cancelled on error:
+
+.. code-block:: python
+
+    result1, result2 = await async_plus.try_gather(
+        coroutine_func1(...),
+        coroutine_func2(...),
+    )
+
 
 Fire-and-forget task
 --------------------
@@ -32,7 +58,7 @@ occurs.  In all cases all unfinished tasks are cancelled at the end of
 ``async with`` block.
 
 
-Increase delay between attempts in superviser
+Increase delay between attempts in supervisor
 ---------------------------------------------
 
 .. code-block:: python
