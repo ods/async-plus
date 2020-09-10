@@ -4,11 +4,10 @@ from random import random
 import time
 from typing import Optional, Sequence, Union
 
+from .typing import FloatLike
+
 
 __all__ = ['RetryDelayer']
-
-
-FloatLike = Union[int, float]
 
 
 class RetryDelayer:
