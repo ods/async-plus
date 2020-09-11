@@ -27,8 +27,8 @@ async def test_long_success(caplog):
 
     assert result is RESULT
     rec1, rec2 = caplog.pop_matching(name='async_plus')
-    assert "didn't finish in 0.1 secs" in rec1.message
-    assert 'returned after 0.2 secs' in rec2.message
+    assert 'Still wating for' in rec1.message
+    assert 'returned after' in rec2.message
 
 
 async def test_long_exception(caplog):
@@ -38,5 +38,5 @@ async def test_long_exception(caplog):
         )
 
     rec1, rec2 = caplog.pop_matching(name='async_plus')
-    assert "didn't finish in 0.1 secs" in rec1.message
-    assert 'raised CustomException after 0.2 secs' in rec2.message
+    assert 'Still wating for' in rec1.message
+    assert 'raised CustomException after' in rec2.message

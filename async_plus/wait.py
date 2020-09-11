@@ -1,5 +1,7 @@
 import asyncio
 import logging
+import math
+import sys
 from time import monotonic
 from typing import Awaitable, Optional
 
@@ -10,6 +12,16 @@ __all__ = ['impatient']
 
 
 logger = logging.getLogger(__name__)
+
+
+def _describe_caller(stacklevel=1):
+    frame = sys._getframe(stacklevel)
+    return f'at {frame.f_code.co_filename}:{frame.f_lineno}'
+
+
+def _pprint_float(value, significant_digits=2):
+    precision = max(0, math.ceil(-math.log(value) / math.log(10)) + 1)
+    return f'{value:.{precision}f}'
 
 
 async def impatient(
@@ -49,7 +61,11 @@ async def impatient(
 
     if not done and log_after is not None:
         long_wait = True
-        logger.log(log_level, f"{aw!r} didn't finish in {log_after} secs")
+        message = (
+            f'Still wating for {aw!r} {_describe_caller()} after '
+            f'{log_after} secs'
+        )
+        logger.log(log_level, message)
 
     try:
         return await fut
@@ -66,7 +82,8 @@ async def impatient(
 
             elapsed = monotonic() - started
 
-            # TODO Pretty representation for `aw` with source
-            # TODO Pretty representation for `elapsed` with flexible precision
-            # and units
-            logger.log(log_level, f'{aw!r} {status} after {elapsed:.1f} secs')
+            message = (
+                f'{aw!r} {_describe_caller()} {status} after '
+                f'{_pprint_float(elapsed)} secs'
+            )
+            logger.log(log_level, message)
