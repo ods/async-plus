@@ -33,17 +33,18 @@ async def impatient(
     log_finish: str = 'after_long_wait',
     log_level: int = logging.INFO,
 ):
-    """
-    Wait `aw` for completion, log message if it takes too long and/or it
+    """Wait `aw` for completion, log message if it takes too long and/or it
     finishes.
 
     Possible values for `log_finish`:
-        'never'           — don't log on completion
-        'after_long_wait' — log on completion only when it took more than
-                            `log_after` and corresponding message was logged
-        'always'          - log on completion even if took less than
-                            `log_after` (`log_after` can be `None` is this
-                            case)
+        'never'
+            don't log on completion
+        'after_long_wait'
+            log on completion only when it took more than `log_after` and
+            corresponding message was logged
+        'always'
+            log on completion even if took less than `log_after` (`log_after`
+            may be `None` is this case)
     """
     if log_finish in ('never', 'after_long_wait'):
         if log_after is None:

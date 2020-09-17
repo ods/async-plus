@@ -11,8 +11,7 @@ __all__ = ['RetryDelayer']
 
 
 class RetryDelayer:
-    """
-    Usage example:
+    """Usage example:
 
         retry_delayer = async_plus.RetryDelayer()
         while True:
