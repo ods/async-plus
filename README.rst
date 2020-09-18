@@ -63,7 +63,7 @@ Increase delay between attempts in supervisor
 
 .. code-block:: python
 
-    retry_delayer = async_plus.RetryDelayer()
+    retry_delayer = async_plus.RetryDelayer([0, 10, 60], random_shift=1)
     while True:
         try:
             await run_service_x()
@@ -73,6 +73,23 @@ Increase delay between attempts in supervisor
         except Exception:
             logger.exception('Error in service X:')
             await retry_delayer.sleep()
+
+
+Log long waits
+--------------
+
+Does your program hang and you don't know what it waits for?  Wrap suspicious
+coroutines with ``impatient()`` to see bottlenecks:
+
+.. code-block:: python
+
+    await async_plus.impatient(asyncio.sleep(10), log_after=5)
+
+Or just log time it took:
+
+.. code-block:: python
+
+    await async_plus.impatient(asyncio.sleep(10), log_completion='always')
 
 
 Change log
