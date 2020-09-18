@@ -27,16 +27,16 @@ def _pprint_float(value, significant_digits=2):
 async def impatient(
     aw: Awaitable,
     *,
-    log_after: Optional[FloatLike],
+    log_after: Optional[FloatLike] = None,
     # TODO Use `Literal` after dropping support for Python 3.7
     # Literal['never', 'after_long_wait', 'always']
-    log_finish: str = 'after_long_wait',
+    log_completion: str = 'after_long_wait',
     log_level: int = logging.INFO,
 ):
     """Wait `aw` for completion, log message if it takes too long and/or it
     finishes.
 
-    Possible values for `log_finish`:
+    Possible values for `log_completion`:
         'never'
             don't log on completion
         'after_long_wait'
@@ -46,12 +46,12 @@ async def impatient(
             log on completion even if took less than `log_after` (`log_after`
             may be `None` is this case)
     """
-    if log_finish in ('never', 'after_long_wait'):
+    if log_completion in ('never', 'after_long_wait'):
         if log_after is None:
             raise ValueError(
-                f"log_after can't be None for log_finish={log_finish!r}"
+                f'log_after is mandatory for log_completion={log_completion!r}'
             )
-    elif log_finish != 'always':
+    elif log_completion != 'always':
         raise ValueError(f'Invalid value for log_after: {log_after!r}')
 
     fut = asyncio.ensure_future(aw)
@@ -72,8 +72,8 @@ async def impatient(
         return await fut
     finally:
         if (
-            log_finish == 'always' or
-            (log_finish == 'after_long_wait' and long_wait)
+            log_completion == 'always' or
+            (log_completion == 'after_long_wait' and long_wait)
         ):
             exc = fut.exception()
             if exc is None:
