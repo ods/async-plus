@@ -36,7 +36,7 @@ Fire-and-forget task
 With ``create_task()`` it's your responsibility to retrieve exception.
 Usually this causes that exception is not seen until process finishes or
 even is not seen at all if process is killed.  With ``launch_watched()``
-excpetion is logged immediately when it's raised.
+exception is logged immediately when it's raised.
 
 .. code-block:: python
 
@@ -78,14 +78,14 @@ Increase delay between attempts in supervisor
 Log long waits
 --------------
 
-Does your program hang and you don't know what it waits for?  Wrap suspicious
-coroutines with ``impatient()`` to see bottlenecks:
+Does your program hang and you don't know what it's waiting for?  Wrap
+suspicious coroutines with ``impatient()`` to see bottlenecks:
 
 .. code-block:: python
 
     await async_plus.impatient(asyncio.sleep(10), log_after=5)
 
-Or just log time it took:
+Or just log the time it took:
 
 .. code-block:: python
 
