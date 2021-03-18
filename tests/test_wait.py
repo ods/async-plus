@@ -38,7 +38,7 @@ async def test_no_log_after_success(caplog):
         )
 
     assert result is RESULT
-    [rec] = caplog.pop_matching(name='async_plus')
+    [rec] = caplog.matching(name='async_plus')
     assert 'returned after' in rec.message
     assert 'tests/test_wait.py' in rec.message
 
@@ -49,7 +49,7 @@ async def test_no_log_after_exception(caplog):
             delayed(0, CustomException()), log_completion='always',
         )
 
-    [rec] = caplog.pop_matching(name='async_plus')
+    [rec] = caplog.matching(name='async_plus')
     assert 'raised CustomException after' in rec.message
     assert 'tests/test_wait.py' in rec.message
 
@@ -62,7 +62,7 @@ async def test_long_wait_success(caplog, log_completion):
         )
 
     assert result is RESULT
-    rec1, rec2 = caplog.pop_matching(name='async_plus')
+    rec1, rec2 = caplog.matching(name='async_plus')
     assert 'Still wating for' in rec1.message
     assert 'returned after' in rec2.message
     assert 'tests/test_wait.py' in rec1.message
@@ -77,7 +77,7 @@ async def test_long_wait_exception(caplog, log_completion):
             log_completion=log_completion,
         )
 
-    rec1, rec2 = caplog.pop_matching(name='async_plus')
+    rec1, rec2 = caplog.matching(name='async_plus')
     assert 'Still wating for' in rec1.message
     assert 'raised CustomException after' in rec2.message
     assert 'tests/test_wait.py' in rec1.message
@@ -93,7 +93,7 @@ async def test_not_long_wait_success(caplog, log_completion):
         )
 
     assert result is RESULT
-    recs = caplog.pop_matching(name='async_plus')
+    recs = caplog.matching(name='async_plus')
     assert not recs
 
 
@@ -105,5 +105,5 @@ async def test_not_long_wait_exception(caplog, log_completion):
             log_completion=log_completion,
         )
 
-    recs = caplog.pop_matching(name='async_plus')
+    recs = caplog.matching(name='async_plus')
     assert not recs

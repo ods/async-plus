@@ -63,7 +63,7 @@ async def test_random_shift():
         for i in range(COUNT):
             await delayer.sleep()
             assert sleep_mock.await_count == i + 1
-            (delay,) = sleep_mock.await_args.args
+            (delay,) = sleep_mock.await_args.args  # type: ignore
             assert 3 <= delay < 5
             shifts += delay - 3
 

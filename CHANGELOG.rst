@@ -6,6 +6,8 @@ Unreleased
 
 * Fix stack level in log messages from ``impatient()``
 * Add ``stacklevel`` parameter to ``impatient()``
+* Fix type annotations
+* Mark distibuted package as typed
 
 
 0.2.0 (2020-09-22)
