@@ -14,12 +14,12 @@ __all__ = ['impatient']
 logger = logging.getLogger(__name__)
 
 
-def _describe_caller(stacklevel=1):
-    frame = sys._getframe(stacklevel)
+def _describe_caller(stacklevel=0):
+    frame = sys._getframe(stacklevel + 1)
     return f'at {frame.f_code.co_filename}:{frame.f_lineno}'
 
 
-def _pprint_float(value, significant_digits=2):
+def _pprint_float(value):
     precision = max(0, math.ceil(-math.log(value) / math.log(10)) + 1)
     return f'{value:.{precision}f}'
 
@@ -32,6 +32,7 @@ async def impatient(
     # Literal['never', 'after_long_wait', 'always']
     log_completion: str = 'after_long_wait',
     log_level: int = logging.INFO,
+    stacklevel: int = 0,
 ):
     """Wait `aw` for completion, log message if it takes too long and/or it
     finishes.
@@ -54,6 +55,8 @@ async def impatient(
     elif log_completion != 'always':
         raise ValueError(f'Invalid value for log_after: {log_after!r}')
 
+    stacklevel = stacklevel + 1
+
     fut = asyncio.ensure_future(aw)
     long_wait = False
     started = monotonic()
@@ -63,8 +66,8 @@ async def impatient(
     if not done and log_after is not None:
         long_wait = True
         message = (
-            f'Still wating for {aw!r} {_describe_caller()} after '
-            f'{log_after} secs'
+            f'Still wating for {aw!r} '
+            f'{_describe_caller(stacklevel=stacklevel)} after {log_after} secs'
         )
         logger.log(log_level, message)
 
@@ -84,7 +87,7 @@ async def impatient(
             elapsed = monotonic() - started
 
             message = (
-                f'{aw!r} {_describe_caller()} {status} after '
-                f'{_pprint_float(elapsed)} secs'
+                f'{aw!r} {_describe_caller(stacklevel=stacklevel)} '
+                f'{status} after {_pprint_float(elapsed)} secs'
             )
             logger.log(log_level, message)
