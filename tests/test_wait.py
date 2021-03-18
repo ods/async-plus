@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import sys
 
 import pytest
 
@@ -39,6 +40,7 @@ async def test_no_log_after_success(caplog):
     assert result is RESULT
     [rec] = caplog.pop_matching(name='async_plus')
     assert 'returned after' in rec.message
+    assert 'tests/test_wait.py' in rec.message
 
 
 async def test_no_log_after_exception(caplog):
@@ -49,6 +51,7 @@ async def test_no_log_after_exception(caplog):
 
     [rec] = caplog.pop_matching(name='async_plus')
     assert 'raised CustomException after' in rec.message
+    assert 'tests/test_wait.py' in rec.message
 
 
 @pytest.mark.parametrize('log_completion', ['after_long_wait', 'always'])
@@ -62,6 +65,8 @@ async def test_long_wait_success(caplog, log_completion):
     rec1, rec2 = caplog.pop_matching(name='async_plus')
     assert 'Still wating for' in rec1.message
     assert 'returned after' in rec2.message
+    assert 'tests/test_wait.py' in rec1.message
+    assert 'tests/test_wait.py' in rec2.message
 
 
 @pytest.mark.parametrize('log_completion', ['after_long_wait', 'always'])
@@ -75,6 +80,9 @@ async def test_long_wait_exception(caplog, log_completion):
     rec1, rec2 = caplog.pop_matching(name='async_plus')
     assert 'Still wating for' in rec1.message
     assert 'raised CustomException after' in rec2.message
+    assert 'tests/test_wait.py' in rec1.message
+    if sys.version_info >= (3, 9, 0):
+        assert 'tests/test_wait.py' in rec2.message
 
 
 @pytest.mark.parametrize('log_completion', ['never', 'after_long_wait'])
