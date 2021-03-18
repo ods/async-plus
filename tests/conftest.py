@@ -1,8 +1,7 @@
 import asyncio
-import functools
+import re
 
 import pytest
-from _pytest.logging import LogCaptureFixture
 
 
 def pytest_collection_modifyitems(items):
@@ -11,7 +10,13 @@ def pytest_collection_modifyitems(items):
             item.add_marker('asyncio')
 
 
-class AdvancedLogCaptureFixture(LogCaptureFixture):
+class LogCaptureFixtureWrapper:
+
+    def __init__(self, orig):
+        self._orig = orig
+
+    def __getattr__(self, name):
+        return getattr(self._orig, name)
 
     def matching(self, _func=None, *, name=None, message=None):
         filters = []
@@ -42,23 +47,7 @@ class AdvancedLogCaptureFixture(LogCaptureFixture):
                 result.append(record)
         return result
 
-    @functools.wraps(matching)
-    def pop_matching(self, *args, **kwargs):
-        result = self.matching(*args, **kwargs)
-
-        if result:
-            all_records = list(self.handler.records) # copy
-            self.clear()
-            # Re-emit not matching
-            for record in all_records:
-                if not any(record is match for match in result):
-                    self.handler.emit(record)
-
-        return result
-
 
 @pytest.fixture
-def caplog(request):
-    result = AdvancedLogCaptureFixture(request.node)
-    yield result
-    result._finalize()
+def caplog(caplog):
+    return LogCaptureFixtureWrapper(caplog)

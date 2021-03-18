@@ -10,9 +10,9 @@ __all__ = ['try_gather', 'launch_watched', 'task_scope']
 logger = logging.getLogger(__name__)
 
 
-async def try_gather(*futs):
+async def try_gather(*futures_or_coroutines):
     """Safe version of gather that doesn't leak tasks."""
-    futs = [asyncio.ensure_future(fut) for fut in futs]
+    futs = [asyncio.ensure_future(fut) for fut in futures_or_coroutines]
     try:
         return await asyncio.gather(*futs)
     finally:

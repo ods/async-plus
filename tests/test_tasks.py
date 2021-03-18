@@ -88,7 +88,7 @@ async def test_launch_watched_exception(caplog):
         async_plus.launch_watched(falling())
         await asyncio.sleep(0.001)
 
-    [rec] = caplog.pop_matching(name='async_plus')
+    [rec] = caplog.matching(name='async_plus')
     assert rec.exc_info is not None
     assert 'FALLING_TASK' in rec.exc_text
 
@@ -111,7 +111,7 @@ async def test_launch_watched_bad_on_exception(caplog):
         async_plus.launch_watched(falling(), on_exception=on_exception)
         await asyncio.sleep(0.001)
 
-    [rec] = caplog.pop_matching(name='async_plus')
+    [rec] = caplog.matching(name='async_plus')
     assert rec.exc_info is not None
     assert rec.exc_info[0] is RuntimeError
 
@@ -143,7 +143,7 @@ async def test_coroutine_scope_exception(caplog, return_when):
         with caplog.at_level(logging.ERROR):
             await scope.wait(return_when=return_when)
 
-    [rec] = caplog.pop_matching(name='async_plus')
+    [rec] = caplog.matching(name='async_plus')
     assert rec.exc_info is not None
     assert 'FALLING_TASK' in rec.exc_text
 
