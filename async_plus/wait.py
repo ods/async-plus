@@ -14,8 +14,8 @@ __all__ = ['impatient']
 logger = logging.getLogger(__name__)
 
 
-def _describe_caller(stacklevel=1):
-    frame = sys._getframe(stacklevel)
+def _describe_caller(stacklevel=0):
+    frame = sys._getframe(stacklevel + 1)
     return f'at {frame.f_code.co_filename}:{frame.f_lineno}'
 
 
@@ -55,7 +55,7 @@ async def impatient(
     elif log_completion != 'always':
         raise ValueError(f'Invalid value for log_after: {log_after!r}')
 
-    stacklevel = stacklevel + 2
+    stacklevel = stacklevel + 1
 
     fut = asyncio.ensure_future(aw)
     long_wait = False
