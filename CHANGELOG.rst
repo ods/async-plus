@@ -1,8 +1,8 @@
 Change Log
 ==========
 
-Unreleased
-----------
+0.3.0 (2021-03-19)
+------------------
 
 * Fix stack level in log messages from ``impatient()``
 * Add ``stacklevel`` parameter to ``impatient()``
